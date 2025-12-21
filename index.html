@@ -10,7 +10,6 @@
   <meta name="theme-color" content="#0b1f3a">
 
   <style>
-    /* Reset & Body */
     body, html {
       margin: 0;
       padding: 0;
@@ -25,7 +24,7 @@
       position: relative;
     }
 
-    /* Pulsing Wi-Fi Waves */
+    /* Loader & Wi-Fi Waves */
     .wifi-wave {
       position: absolute;
       width: 100%;
@@ -51,22 +50,32 @@
     .wave:nth-child(4) { width: 300px; height: 300px; animation-delay: 1.5s; }
 
     @keyframes pulse {
-      0% {
-        transform: scale(0.5);
-        opacity: 0.5;
-      }
-      50% {
-        transform: scale(1.5);
-        opacity: 0.2;
-      }
-      100% {
-        transform: scale(2);
-        opacity: 0;
-      }
+      0% { transform: scale(0.5); opacity: 0.5; }
+      50% { transform: scale(1.5); opacity: 0.2; }
+      100% { transform: scale(2); opacity: 0; }
     }
 
-    /* Card */
+    /* Splash screen text/logo */
+    #loader {
+      position: absolute;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .wifi-logo {
+      width: 80px;
+      margin-bottom: 15px;
+    }
+
+    /* Dashboard Card */
     .card {
+      display: none; /* hidden until loader finishes */
       position: relative;
       z-index: 1;
       background: white;
@@ -80,9 +89,7 @@
 
     h1 { font-size: 20px; margin-bottom: 5px }
 
-    .packages {
-      margin: 15px 0;
-    }
+    .packages { margin: 15px 0; }
 
     .pkg {
       border: 2px solid #ddd;
@@ -122,12 +129,6 @@
     }
 
     .small { font-size: 13px; color: #555; margin-top: 10px; }
-
-    /* Wi-Fi Logo */
-    .wifi-logo {
-      width: 60px;
-      margin-bottom: 10px;
-    }
   </style>
 </head>
 <body>
@@ -140,10 +141,14 @@
   <div class="wave"></div>
 </div>
 
-<!-- Card -->
-<div class="card">
+<!-- Splash Loader -->
+<div id="loader">
   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Starlink_Logo.svg/1200px-Starlink_Logo.svg.png" alt="Starlink Logo" class="wifi-logo">
+  <p>Connecting to Starlink...</p>
+</div>
 
+<!-- Dashboard -->
+<div class="card" id="dashboard">
   <h1>Starlink Internet Access</h1>
   <p>Select a package and pay via M-Pesa</p>
 
@@ -176,6 +181,12 @@
 <script>
 let selectedPackage = "";
 let selectedAmount = "";
+
+// Show dashboard after 35 seconds
+setTimeout(() => {
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+}, 35000);
 
 function selectPkg(pkg, amount){
   selectedPackage = pkg;
