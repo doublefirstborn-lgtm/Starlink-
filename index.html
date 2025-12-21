@@ -24,7 +24,7 @@
       position: relative;
     }
 
-    /* Loader & Wi-Fi Waves */
+    /* Wi-Fi Waves */
     .wifi-wave {
       position: absolute;
       width: 100%;
@@ -44,27 +44,20 @@
       animation: pulse 2.5s infinite;
     }
 
-    .wave:nth-child(1) { width: 100px; height: 100px; animation-delay: 0s; }
-    .wave:nth-child(2) { width: 160px; height: 160px; animation-delay: 0.5s; }
+    .wave:nth-child(1) { width: 100px; height: 100px; }
+    .wave:nth-child(2) { width: 160px; height: 160px; animation-delay: .5s; }
     .wave:nth-child(3) { width: 220px; height: 220px; animation-delay: 1s; }
     .wave:nth-child(4) { width: 300px; height: 300px; animation-delay: 1.5s; }
 
     @keyframes pulse {
       0% { transform: scale(0.5); opacity: 0.5; }
-      50% { transform: scale(1.5); opacity: 0.2; }
       100% { transform: scale(2); opacity: 0; }
     }
 
-    /* Splash screen text/logo */
     #loader {
       position: absolute;
       z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       color: white;
-      font-size: 20px;
       text-align: center;
     }
 
@@ -73,10 +66,8 @@
       margin-bottom: 15px;
     }
 
-    /* Dashboard Card */
     .card {
-      display: none; /* hidden until loader finishes */
-      position: relative;
+      display: none;
       z-index: 1;
       background: white;
       padding: 20px;
@@ -84,10 +75,8 @@
       max-width: 380px;
       width: 90%;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 25px rgba(0,0,0,.3);
     }
-
-    h1 { font-size: 20px; margin-bottom: 5px }
 
     .packages { margin: 15px 0; }
 
@@ -104,8 +93,7 @@
       background: #e9f9ef;
     }
 
-    .pkg strong { display: block; font-size: 16px; }
-    .price { color: #00c853; font-weight: bold; font-size: 18px; }
+    .price { color: #00c853; font-weight: bold; }
 
     input {
       width: 100%;
@@ -124,11 +112,19 @@
       width: 100%;
       font-size: 16px;
       border-radius: 12px;
-      margin-top: 15px;
+      margin-top: 12px;
       cursor: pointer;
     }
 
-    .small { font-size: 13px; color: #555; margin-top: 10px; }
+    .dark {
+      background: #0b1f3a;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #555;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -141,32 +137,29 @@
   <div class="wave"></div>
 </div>
 
-<!-- Splash Loader -->
+<!-- Loader -->
 <div id="loader">
-  <img src="logo.png" alt="Starlink Internet " class="wifi-logo">
-  <p>Connecting to Starlink... <br>
-    Please wait as we connect you to the fastest world network 
-  </p>
+  <img src="logo.png" class="wifi-logo">
+  <p>Connecting to Starlink...<br>Please wait</p>
 </div>
 
 <!-- Dashboard -->
 <div class="card" id="dashboard">
-  <h1>Starlink Internet Access</h1>
-  <p>Select a package and pay via M-Pesa</p>
+  <h2>Starlink Internet Access</h2>
+  <p>Select a package</p>
 
   <div class="packages">
-    <div class="pkg" onclick="selectPkg('Weekly',350)">
-      <strong>Weekly Subscription</strong>
+    <div class="pkg" onclick="selectPkg(this,'Weekly',350)">
+      <strong>Weekly</strong>
       <span class="price">KES 350</span>
     </div>
-
-    <div class="pkg" onclick="selectPkg('Monthly',900)">
-      <strong>Monthly Subscription</strong>
+    <div class="pkg" onclick="selectPkg(this,'Monthly',900)">
+      <strong>Monthly</strong>
       <span class="price">KES 900</span>
     </div>
   </div>
 
-  <input type="tel" id="phone" placeholder="Enter your phone number" />
+  <input type="tel" id="phone" placeholder="Enter phone number">
 
   <p>
     <strong>Paybill:</strong> 714888<br>
@@ -174,61 +167,99 @@
   </p>
 
   <button onclick="payWhatsApp()">Pay via WhatsApp</button>
+  <button class="dark" onclick="confirmPayment()">I Have Paid</button>
+
+  <p class="small">After payment, access activates automatically.</p>
+</div>
+
+<!-- Access Code Page -->
+<div class="card" id="accessPage">
+  <h2>Internet Activated</h2>
+  <p>Your access code:</p>
+
+  <div id="code" style="
+    font-size:22px;
+    font-weight:bold;
+    letter-spacing:3px;
+    margin:15px 0;
+    color:#00c853;">
+  </div>
 
   <p class="small">
-    After payment, your internet access will be activated.
+    Reconnect to Wi-Fi if internet does not start.
   </p>
+
+  <button onclick="location.reload()">Reconnect</button>
 </div>
 
 <script>
 let selectedPackage = "";
 let selectedAmount = "";
 
-// Show dashboard after 35 seconds
+// Loader delay
 setTimeout(() => {
-  document.getElementById("loader").style.display = "none";
-  document.getElementById("dashboard").style.display = "block";
-}, 35000);
+  loader.style.display = "none";
+  dashboard.style.display = "block";
+}, 3000);
 
-function selectPkg(pkg, amount){
+function selectPkg(el,pkg,amount){
   selectedPackage = pkg;
   selectedAmount = amount;
-
-  document.querySelectorAll('.pkg').forEach(p => p.classList.remove('active'));
-  event.currentTarget.classList.add('active');
+  document.querySelectorAll(".pkg").forEach(p=>p.classList.remove("active"));
+  el.classList.add("active");
 }
 
 function payWhatsApp(){
-  const phone = document.getElementById("phone").value;
-
   if(!selectedPackage){
-    alert("Please select a package");
+    alert("Select a package");
     return;
   }
+
+  const phone = document.getElementById("phone").value;
   if(phone.length < 9){
-    alert("Please enter a valid phone number to get access code");
+    alert("Enter valid phone number");
     return;
   }
 
-  const adminWhatsApp = "254712706833"; // YOUR NUMBER
-  const message = `
-Starlink Internet Payment
-
+  const admin = "254712706833";
+  const msg = `
+Starlink Payment Request
 Package: ${selectedPackage}
 Amount: KES ${selectedAmount}
-User Phone: ${phone}
-
-Payment Method:
+Phone: ${phone}
 Paybill 714888
-Account 418441 
-  `;
+Account 418441`;
 
-  const url = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
-  window.open(url, "_blank");
+  window.open(`https://wa.me/${admin}?text=${encodeURIComponent(msg)}`);
 }
 
-/* Register Service Worker */
-if ("serviceWorker" in navigator) {
+function confirmPayment(){
+  const phone = document.getElementById("phone").value;
+  const mpesa = prompt("Enter M-Pesa Transaction Code");
+
+  if(phone.length < 9 || !mpesa){
+    alert("Missing details");
+    return;
+  }
+
+  const admin = "254712706833";
+  const msg = `
+PAYMENT CONFIRMED
+Phone: ${phone}
+M-Pesa Code: ${mpesa}`;
+
+  window.open(`https://wa.me/${admin}?text=${encodeURIComponent(msg)}`);
+
+  dashboard.style.display = "none";
+  accessPage.style.display = "block";
+
+  document.getElementById("code").innerText =
+    Math.random().toString(36).substring(2,6).toUpperCase() + "-" +
+    Math.random().toString(36).substring(2,6).toUpperCase();
+}
+
+// Service Worker
+if("serviceWorker" in navigator){
   navigator.serviceWorker.register("service-worker.js");
 }
 </script>
