@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Starlink Internet Access</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b1f3a">
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#0b1f3a;
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .card{
+      background:white;
+      padding:22px;
+      border-radius:16px;
+      max-width:380px;
+      width:100%;
+      text-align:center;
+    }
+
+    .logo{
+      display:flex;
+      justify-content:center;
+      margin-bottom:10px;
+    }
+    .logo img{
+      width:90px;
+    }
+
+    h1{font-size:20px;margin-bottom:5px}
+
+    .packages{margin:15px 0}
+    .pkg{
+      border:2px solid #ddd;
+      padding:12px;
+      border-radius:12px;
+      margin-bottom:10px;
+      cursor:pointer;
+    }
+    .pkg.active{
+      border-color:#00c853;
+      background:#e9f9ef;
+    }
+    .price{
+      color:#00c853;
+      font-weight:bold;
+      font-size:18px;
+    }
+
+    input{
+      width:100%;
+      padding:12px;
+      font-size:16px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      margin-top:10px;
+    }
+
+    button{
+      width:100%;
+      padding:14px;
+      font-size:16px;
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+      margin-top:12px;
+    }
+
+    .pay-btn{
+      background:#00c853;
+      color:white;
+    }
+
+    .paid-btn{
+      background:#0b1f3a;
+      color:white;
+    }
+
+    .small{
+      font-size:13px;
+      color:#555;
+      margin-top:10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="logo">
+    <img src="logo.png" alt="Starlink WiFi">
+  </div>
+
+  <h1>Starlink WiFi Access</h1>
+  <p>Select a package and pay via M-Pesa</p>
+
+  <div class="packages">
+    <div class="pkg" onclick="selectPkg(event,'Daily',100)">
+      <strong>Daily Access</strong>
+      <span class="price">KES 100</span>
+    </div>
+
+    <div class="pkg" onclick="selectPkg(event,'Weekly',350)">
+      <strong>Weekly Subscription</strong>
+      <span class="price">KES 350</span>
+    </div>
+
+    <div class="pkg" onclick="selectPkg(event,'Monthly',900)">
+      <strong>Monthly Subscription</strong>
+      <span class="price">KES 900</span>
+    </div>
+  </div>
+
+  <input type="tel" id="phone" placeholder="Enter your phone number" />
+
+  <p>
+    <strong>Paybill:</strong> 714888<br>
+    <strong>Account:</strong> 418441
+  </p>
+
+  <!-- PAY BUTTON -->
+  <button class="pay-btn" onclick="payWhatsApp()">Pay via WhatsApp</button>
+
+  <!-- I HAVE PAID BUTTON -->
+  <button class="paid-btn" onclick="confirmPaid()">I HAVE PAID</button>
+
+  <p class="small">
+    After payment confirmation, your internet access will be activated.
+  </p>
+
+</div>
+
+<script>
+let selectedPackage = "";
+let selectedAmount = "";
+
+function selectPkg(event, pkg, amount){
+  selectedPackage = pkg;
+  selectedAmount = amount;
+
+  document.querySelectorAll('.pkg').forEach(p => p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+function payWhatsApp(){
+  const phone = document.getElementById("phone").value.trim();
+  if(!selectedPackage){
+    alert("Please select a package");
+    return;
+  }
+  if(phone.length < 9){
+    alert("Please enter a valid phone number");
+    return;
+  }
+
+  const adminWhatsApp = "254712706833";
+  const message =
+`Starlink Internet Payment Request
+
+Package: ${selectedPackage}
+Amount: KES ${selectedAmount}
+Phone: ${phone}
+
+Paybill: 714888
+Account: 418441`;
+
+  window.open(
+    `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`,
+    "_blank"
+  );
+}
+
+function confirmPaid(){
+  const phone = document.getElementById("phone").value.trim();
+  if(!selectedPackage || phone.length < 9){
+    alert("Select a package and enter phone number first");
+    return;
+  }
+
+  const adminWhatsApp = "254712706833";
+  const message =
+`CONFIRMATION: PAYMENT DONE
+
+Package: ${selectedPackage}
+Amount: KES ${selectedAmount}
+Phone: ${phone}
+
+Please activate internet access.`;
+
+  window.open(
+    `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`,
+    "_blank"
+  );
+}
+
+/* PWA */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+</body>
+</html>
