@@ -19,6 +19,36 @@
       align-items:center;
       justify-content:center;
     }
+
+    /* LOADER SCREEN */
+    #loader{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:#0b1f3a;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+      color:white;
+    }
+    .spinner{
+      width:60px;
+      height:60px;
+      border:6px solid rgba(255,255,255,0.3);
+      border-top:6px solid #00c853;
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+      margin-bottom:15px;
+    }
+    @keyframes spin{
+      0%{transform:rotate(0deg)}
+      100%{transform:rotate(360deg)}
+    }
+
     .card{
       background:white;
       padding:22px;
@@ -26,6 +56,7 @@
       max-width:380px;
       width:100%;
       text-align:center;
+      display:none;
     }
 
     .logo{
@@ -75,16 +106,8 @@
       cursor:pointer;
       margin-top:12px;
     }
-
-    .pay-btn{
-      background:#00c853;
-      color:white;
-    }
-
-    .paid-btn{
-      background:#0b1f3a;
-      color:white;
-    }
+    .pay-btn{background:#00c853;color:white}
+    .paid-btn{background:#0b1f3a;color:white}
 
     .small{
       font-size:13px;
@@ -95,7 +118,14 @@
 </head>
 <body>
 
-<div class="card">
+<!-- LOADER -->
+<div id="loader">
+  <div class="spinner"></div>
+  <p>Connecting to Starlink WiFi…</p>
+</div>
+
+<!-- MAIN APP -->
+<div class="card" id="app">
 
   <div class="logo">
     <img src="logo.png" alt="Starlink WiFi">
@@ -128,79 +158,60 @@
     <strong>Account:</strong> 418441
   </p>
 
-  <!-- PAY BUTTON -->
   <button class="pay-btn" onclick="payWhatsApp()">Pay via WhatsApp</button>
-
-  <!-- I HAVE PAID BUTTON -->
   <button class="paid-btn" onclick="confirmPaid()">I HAVE PAID</button>
 
   <p class="small">
     After payment confirmation, your internet access will be activated.
   </p>
-
 </div>
 
 <script>
+/* SHOW LOADER THEN APP */
+window.onload = () => {
+  setTimeout(() => {
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("app").style.display = "block";
+  }, 2000);
+};
+
 let selectedPackage = "";
 let selectedAmount = "";
 
 function selectPkg(event, pkg, amount){
   selectedPackage = pkg;
   selectedAmount = amount;
-
   document.querySelectorAll('.pkg').forEach(p => p.classList.remove('active'));
   event.currentTarget.classList.add('active');
 }
 
 function payWhatsApp(){
   const phone = document.getElementById("phone").value.trim();
-  if(!selectedPackage){
-    alert("Please select a package");
+  if(!selectedPackage || phone.length < 9){
+    alert("Select a package and enter a valid phone number");
     return;
   }
-  if(phone.length < 9){
-    alert("Please enter a valid phone number");
-    return;
-  }
-
-  const adminWhatsApp = "254712706833";
-  const message =
+  const msg =
 `Starlink Internet Payment Request
-
 Package: ${selectedPackage}
 Amount: KES ${selectedAmount}
-Phone: ${phone}
-
-Paybill: 714888
-Account: 418441`;
-
-  window.open(
-    `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`,
-    "_blank"
-  );
+Phone: ${phone}`;
+  window.open(`https://wa.me/254712706833?text=${encodeURIComponent(msg)}`,"_blank");
 }
 
 function confirmPaid(){
   const phone = document.getElementById("phone").value.trim();
   if(!selectedPackage || phone.length < 9){
-    alert("Select a package and enter phone number first");
+    alert("Select package and enter phone number first");
     return;
   }
-
-  const adminWhatsApp = "254712706833";
-  const message =
-`CONFIRMATION: PAYMENT DONE
-
+  const msg =
+`PAYMENT CONFIRMED
 Package: ${selectedPackage}
 Amount: KES ${selectedAmount}
 Phone: ${phone}
-
-Please activate internet access.`;
-
-  window.open(
-    `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`,
-    "_blank"
-  );
+Please activate access.`;
+  window.open(`https://wa.me/254712706833?text=${encodeURIComponent(msg)}`,"_blank");
 }
 
 /* PWA */
