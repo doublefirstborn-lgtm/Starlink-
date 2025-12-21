@@ -10,184 +10,150 @@
   <meta name="theme-color" content="#0b1f3a">
 
   <style>
-    body{
+    /* Reset & Body */
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
       font-family: Arial, sans-serif;
-      background:#0b1f3a;
-      margin:0;
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      background: #0b1f3a;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
     }
 
-    /* ===== FULLSCREEN WIFI LOADER ===== */
-    #loader{
-      position:fixed;
-      inset:0;
-      background:#0b1f3a;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex-direction:column;
-      z-index:9999;
-      color:white;
-      overflow:hidden;
+    /* Pulsing Wi-Fi Waves */
+    .wifi-wave {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 0;
     }
 
-    .rings{
-      position:absolute;
-      width:20px;
-      height:20px;
+    .wave {
+      position: absolute;
+      border: 2px solid #00c853;
+      border-radius: 50%;
+      opacity: 0.5;
+      animation: pulse 2.5s infinite;
     }
 
-    .ring{
-      position:absolute;
-      top:50%;
-      left:50%;
-      width:20px;
-      height:20px;
-      border:3px solid rgba(0,200,83,0.8);
-      border-radius:50%;
-      transform:translate(-50%,-50%);
-      animation:expand 2.5s infinite;
-    }
+    .wave:nth-child(1) { width: 100px; height: 100px; animation-delay: 0s; }
+    .wave:nth-child(2) { width: 160px; height: 160px; animation-delay: 0.5s; }
+    .wave:nth-child(3) { width: 220px; height: 220px; animation-delay: 1s; }
+    .wave:nth-child(4) { width: 300px; height: 300px; animation-delay: 1.5s; }
 
-    .ring:nth-child(2){animation-delay:.8s}
-    .ring:nth-child(3){animation-delay:1.6s}
-
-    @keyframes expand{
-      0%{
-        width:20px;
-        height:20px;
-        opacity:1;
+    @keyframes pulse {
+      0% {
+        transform: scale(0.5);
+        opacity: 0.5;
       }
-      100%{
-        width:200vmax;
-        height:200vmax;
-        opacity:0;
+      50% {
+        transform: scale(1.5);
+        opacity: 0.2;
+      }
+      100% {
+        transform: scale(2);
+        opacity: 0;
       }
     }
 
-    .loader-text{
-      position:relative;
-      z-index:2;
-      margin-top:20px;
-      font-size:16px;
-      letter-spacing:.5px;
+    /* Card */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
 
-    /* ===== APP ===== */
-    .card{
-      background:white;
-      padding:22px;
-      border-radius:16px;
-      max-width:380px;
-      width:100%;
-      text-align:center;
-      display:none;
+    h1 { font-size: 20px; margin-bottom: 5px }
+
+    .packages {
+      margin: 15px 0;
     }
 
-    .logo{
-      display:flex;
-      justify-content:center;
-      margin-bottom:10px;
-    }
-    .logo img{
-      width:90px;
-    }
-
-    h1{
-      font-size:20px;
-      margin-bottom:5px;
+    .pkg {
+      border: 2px solid #ddd;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
     }
 
-    .packages{margin:15px 0}
-    .pkg{
-      border:2px solid #ddd;
-      padding:12px;
-      border-radius:12px;
-      margin-bottom:10px;
-      cursor:pointer;
-    }
-    .pkg.active{
-      border-color:#00c853;
-      background:#e9f9ef;
-    }
-    .price{
-      color:#00c853;
-      font-weight:bold;
-      font-size:18px;
+    .pkg.active {
+      border-color: #00c853;
+      background: #e9f9ef;
     }
 
-    input{
-      width:100%;
-      padding:12px;
-      font-size:16px;
-      border-radius:10px;
-      border:1px solid #ccc;
-      margin-top:10px;
+    .pkg strong { display: block; font-size: 16px; }
+    .price { color: #00c853; font-weight: bold; font-size: 18px; }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
     }
 
-    button{
-      width:100%;
-      padding:14px;
-      font-size:16px;
-      border:none;
-      border-radius:12px;
-      cursor:pointer;
-      margin-top:12px;
+    button {
+      background: #00c853;
+      color: white;
+      border: none;
+      padding: 14px;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 12px;
+      margin-top: 15px;
+      cursor: pointer;
     }
 
-    .pay-btn{
-      background:#00c853;
-      color:white;
-    }
-    .paid-btn{
-      background:#0b1f3a;
-      color:white;
-    }
+    .small { font-size: 13px; color: #555; margin-top: 10px; }
 
-    .small{
-      font-size:13px;
-      color:#555;
-      margin-top:10px;
+    /* Wi-Fi Logo */
+    .wifi-logo {
+      width: 60px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
 
-<!-- ===== FULLSCREEN LOADER ===== -->
-<div id="loader">
-  <div class="rings">
-    <div class="ring"></div>
-    <div class="ring"></div>
-    <div class="ring"></div>
-  </div>
-  <div class="loader-text">Connecting to Starlink WiFi…</div>
+<!-- Wi-Fi Waves -->
+<div class="wifi-wave">
+  <div class="wave"></div>
+  <div class="wave"></div>
+  <div class="wave"></div>
+  <div class="wave"></div>
 </div>
 
-<!-- ===== APP ===== -->
-<div class="card" id="app">
+<!-- Card -->
+<div class="card">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Starlink_Logo.svg/1200px-Starlink_Logo.svg.png" alt="Starlink Logo" class="wifi-logo">
 
-  <div class="logo">
-    <img src="logo.png" alt="Starlink WiFi">
-  </div>
-
-  <h1>Starlink WiFi Access</h1>
+  <h1>Starlink Internet Access</h1>
   <p>Select a package and pay via M-Pesa</p>
 
   <div class="packages">
-    <div class="pkg" onclick="selectPkg(event,'Daily',100)">
-      <strong>Daily Access</strong>
-      <span class="price">KES 100</span>
-    </div>
-
-    <div class="pkg" onclick="selectPkg(event,'Weekly',350)">
+    <div class="pkg" onclick="selectPkg('Weekly',350)">
       <strong>Weekly Subscription</strong>
       <span class="price">KES 350</span>
     </div>
 
-    <div class="pkg" onclick="selectPkg(event,'Monthly',900)">
+    <div class="pkg" onclick="selectPkg('Monthly',900)">
       <strong>Monthly Subscription</strong>
       <span class="price">KES 900</span>
     </div>
@@ -200,61 +166,56 @@
     <strong>Account:</strong> 418441
   </p>
 
-  <button class="pay-btn" onclick="payWhatsApp()">Pay via WhatsApp</button>
-  <button class="paid-btn" onclick="confirmPaid()">I HAVE PAID</button>
+  <button onclick="payWhatsApp()">Pay via WhatsApp</button>
 
   <p class="small">
-    After payment confirmation, your internet access will be activated.
+    After payment, your internet access will be activated.
   </p>
 </div>
 
 <script>
-/* Show loader then app */
-window.onload = () => {
-  setTimeout(() => {
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("app").style.display = "block";
-  }, 2000);
-};
+let selectedPackage = "";
+let selectedAmount = "";
 
-let selectedPackage="", selectedAmount="";
+function selectPkg(pkg, amount){
+  selectedPackage = pkg;
+  selectedAmount = amount;
 
-function selectPkg(event,pkg,amount){
-  selectedPackage=pkg;
-  selectedAmount=amount;
-  document.querySelectorAll('.pkg').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.pkg').forEach(p => p.classList.remove('active'));
   event.currentTarget.classList.add('active');
 }
 
 function payWhatsApp(){
-  const phone=document.getElementById("phone").value.trim();
-  if(!selectedPackage||phone.length<9){
-    alert("Select a package and enter phone number");
+  const phone = document.getElementById("phone").value;
+
+  if(!selectedPackage){
+    alert("Please select a package");
     return;
   }
-  const msg=`Starlink Payment Request
-Package: ${selectedPackage}
-Amount: KES ${selectedAmount}
-Phone: ${phone}`;
-  window.open(`https://wa.me/254712706833?text=${encodeURIComponent(msg)}`,"_blank");
-}
-
-function confirmPaid(){
-  const phone=document.getElementById("phone").value.trim();
-  if(!selectedPackage||phone.length<9){
-    alert("Select package and enter phone number first");
+  if(phone.length < 9){
+    alert("Please enter a valid phone number to get access code");
     return;
   }
-  const msg=`PAYMENT CONFIRMED
+
+  const adminWhatsApp = "254712706833"; // YOUR NUMBER
+  const message = `
+Starlink Internet Payment
+
 Package: ${selectedPackage}
 Amount: KES ${selectedAmount}
-Phone: ${phone}
-Please activate access.`;
-  window.open(`https://wa.me/254712706833?text=${encodeURIComponent(msg)}`,"_blank");
+User Phone: ${phone}
+
+Payment Method:
+Paybill 714888
+Account 418441 
+  `;
+
+  const url = `https://wa.me/${adminWhatsApp}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
 }
 
-/* PWA */
-if("serviceWorker" in navigator){
+/* Register Service Worker */
+if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
 }
 </script>
