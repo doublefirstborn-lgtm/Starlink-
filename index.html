@@ -1,268 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Starlink Internet Access</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0b1f3a">
-
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      font-family: Arial, sans-serif;
-      background: #0b1f3a;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    /* Wi-Fi Waves */
-    .wifi-wave {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .wave {
-      position: absolute;
-      border: 2px solid #00c853;
-      border-radius: 50%;
-      opacity: 0.5;
-      animation: pulse 2.5s infinite;
-    }
-
-    .wave:nth-child(1) { width: 100px; height: 100px; }
-    .wave:nth-child(2) { width: 160px; height: 160px; animation-delay: .5s; }
-    .wave:nth-child(3) { width: 220px; height: 220px; animation-delay: 1s; }
-    .wave:nth-child(4) { width: 300px; height: 300px; animation-delay: 1.5s; }
-
-    @keyframes pulse {
-      0% { transform: scale(0.5); opacity: 0.5; }
-      100% { transform: scale(2); opacity: 0; }
-    }
-
-    #loader {
-      position: absolute;
-      z-index: 1;
-      color: white;
-      text-align: center;
-    }
-
-    .wifi-logo {
-      width: 80px;
-      margin-bottom: 15px;
-    }
-
-    .card {
-      display: none;
-      z-index: 1;
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      max-width: 380px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,.3);
-    }
-
-    .packages { margin: 15px 0; }
-
-    .pkg {
-      border: 2px solid #ddd;
-      padding: 12px;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      cursor: pointer;
-    }
-
-    .pkg.active {
-      border-color: #00c853;
-      background: #e9f9ef;
-    }
-
-    .price { color: #00c853; font-weight: bold; }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      margin-top: 10px;
-    }
-
-    button {
-      background: #00c853;
-      color: white;
-      border: none;
-      padding: 14px;
-      width: 100%;
-      font-size: 16px;
-      border-radius: 12px;
-      margin-top: 12px;
-      cursor: pointer;
-    }
-
-    .dark {
-      background: #0b1f3a;
-    }
-
-    .small {
-      font-size: 13px;
-      color: #555;
-      margin-top: 10px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08111f">
+  <meta name="description" content="CoinsMaster manual trading journal and risk tracker">
+  <title>CoinsMaster Trading Journal</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-
-<!-- Wi-Fi Waves -->
-<div class="wifi-wave">
-  <div class="wave"></div>
-  <div class="wave"></div>
-  <div class="wave"></div>
-  <div class="wave"></div>
-</div>
-
-<!-- Loader -->
-<div id="loader">
-  <img src="logo.png" class="wifi-logo">
-  <p>Connecting to Starlink...<br>Please wait</p>
-</div>
-
-<!-- Dashboard -->
-<div class="card" id="dashboard">
-  <h2>Starlink Internet Access</h2>
-  <p>Select a package</p>
-
-  <div class="packages">
-    <div class="pkg" onclick="selectPkg(this,'Weekly',350)">
-      <strong>Weekly</strong>
-      <span class="price">KES 350</span>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">CM</div>
+      <div>
+        <h1>CoinsMaster</h1>
+        <p>TRADING JOURNAL</p>
+      </div>
     </div>
-    <div class="pkg" onclick="selectPkg(this,'Monthly',900)">
-      <strong>Monthly</strong>
-      <span class="price">KES 900</span>
-    </div>
-  </div>
+    <button id="installApp" class="secondary" hidden>Install App</button>
+  </header>
 
-  <input type="tel" id="phone" placeholder="Enter phone number">
+  <main class="container">
+    <section class="welcome panel">
+      <div>
+        <span class="eyebrow">MANUAL TRADING TRACKER</span>
+        <h2>Trade with a plan.</h2>
+        <p>Record trades, monitor your daily target, and track your balance.</p>
+      </div>
+      <div class="date-box">
+        <label for="journalDate">Journal date</label>
+        <input type="date" id="journalDate">
+      </div>
+    </section>
 
-  <p>
-    <strong>Paybill:</strong> 714888<br>
-    <strong>Account:</strong> 418441
-  </p>
+    <section class="cards">
+      <article class="stat panel">
+        <span>Opening balance</span>
+        <strong id="openingBalance">$10.00</strong>
+        <small>Balance at start of selected day</small>
+      </article>
+      <article class="stat panel">
+        <span>Current balance</span>
+        <strong id="currentBalance">$10.00</strong>
+        <small>Opening balance + recorded P/L</small>
+      </article>
+      <article class="stat panel">
+        <span>Daily profit target</span>
+        <strong id="dailyTarget">$6.00</strong>
+        <small id="targetProgress">0% of target reached</small>
+      </article>
+      <article class="stat panel">
+        <span>Today's net P/L</span>
+        <strong id="dailyPL">$0.00</strong>
+        <small id="tradeCount">0 trades recorded</small>
+      </article>
+    </section>
 
-  <button onclick="payWhatsApp()">Pay via WhatsApp</button>
-  <button class="dark" onclick="confirmPayment()">I Have Paid</button>
+    <section class="panel progress-panel">
+      <div class="section-heading">
+        <div>
+          <h3>Daily target progress</h3>
+          <p>Calculated from the selected day's opening balance.</p>
+        </div>
+        <strong id="progressLabel">0%</strong>
+      </div>
+      <div class="progress-track">
+        <div id="progressBar" class="progress-bar"></div>
+      </div>
+      <p id="riskStatus" class="status">Risk limit not reached.</p>
+    </section>
 
-  <p class="small">After payment, access activates automatically.</p>
-</div>
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <h3>Record a trade</h3>
+          <p>Enter the actual profit or loss from your completed trade.</p>
+        </div>
+      </div>
 
-<!-- Access Code Page -->
-<div class="card" id="accessPage">
-  <h2>Internet Activated</h2>
-  <p>Your access code:</p>
+      <form id="tradeForm">
+        <div class="form-grid">
+          <div>
+            <label for="market">Market</label>
+            <input id="market" maxlength="80" placeholder="e.g. Volatility 10 Index" required>
+          </div>
+          <div>
+            <label for="stake">Stake ($)</label>
+            <input id="stake" type="number" min="0.01" step="0.01"
+                   placeholder="1.00" required>
+          </div>
+          <div>
+            <label for="outcome">Outcome</label>
+            <select id="outcome" required>
+              <option value="win">Win</option>
+              <option value="loss">Loss</option>
+              <option value="breakeven">Break-even</option>
+            </select>
+          </div>
+          <div>
+            <label for="profitLoss">Actual profit/loss ($)</label>
+            <input id="profitLoss" type="number" step="0.01"
+                   placeholder="e.g. 0.80 or -1.00" required>
+            <small class="hint">Use a negative number for a loss.</small>
+          </div>
+          <div class="full">
+            <label for="notes">Trade notes (optional)</label>
+            <textarea id="notes" rows="3" maxlength="500"
+                      placeholder="Strategy, reason for entry, lessons learned..."></textarea>
+          </div>
+        </div>
+        <button type="submit" class="primary">Save Trade</button>
+      </form>
+    </section>
 
-  <div id="code" style="
-    font-size:22px;
-    font-weight:bold;
-    letter-spacing:3px;
-    margin:15px 0;
-    color:#00c853;">
-  </div>
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <h3>Trade history</h3>
+          <p>Showing entries for the selected date.</p>
+        </div>
+        <button id="exportCsv" class="secondary">Export CSV</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Market</th>
+              <th>Stake</th>
+              <th>Outcome</th>
+              <th>P/L</th>
+              <th>Notes</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tradeTable">
+            <tr><td colspan="7" class="empty">No trades recorded for this date.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
-  <p class="small">
-    Reconnect to Wi-Fi if internet does not start.
-  </p>
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <h3>Journal settings</h3>
+          <p>Change your tracking targets below.</p>
+        </div>
+      </div>
+      <form id="settingsForm">
+        <div class="form-grid">
+          <div>
+            <label for="initialCapital">Starting capital ($)</label>
+            <input id="initialCapital" type="number" min="0.01" step="0.01" required>
+          </div>
+          <div>
+            <label for="targetPercent">Daily target (%)</label>
+            <input id="targetPercent" type="number" min="0" max="1000" step="1" required>
+          </div>
+          <div>
+            <label for="lossLimitPercent">Daily loss limit (%)</label>
+            <input id="lossLimitPercent" type="number" min="0" max="100" step="1" required>
+          </div>
+        </div>
+        <button class="primary" type="submit">Save Settings</button>
+      </form>
+      <p class="hint">Your records are stored in this browser on this device. Export CSV backups regularly. Clearing browser data can erase your journal.</p>
+    </section>
 
-  <button onclick="location.reload()">Reconnect</button>
-</div>
+    <footer>
+      <p>CoinsMaster Trading Journal · Manual tracking only · No trades are executed by this app.</p>
+    </footer>
+  </main>
 
-<script>
-let selectedPackage = "";
-let selectedAmount = "";
+  <script src="./app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(console.error);
+      });
+    }
 
-// Loader delay
-setTimeout(() => {
-  loader.style.display = "none";
-  dashboard.style.display = "block";
-}, 3000);
+    let installPrompt = null;
+    const installButton = document.getElementById("installApp");
 
-function selectPkg(el,pkg,amount){
-  selectedPackage = pkg;
-  selectedAmount = amount;
-  document.querySelectorAll(".pkg").forEach(p=>p.classList.remove("active"));
-  el.classList.add("active");
-}
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      installPrompt = event;
+      installButton.hidden = false;
+    });
 
-function payWhatsApp(){
-  if(!selectedPackage){
-    alert("Select a package");
-    return;
-  }
+    installButton.addEventListener("click", async () => {
+      if (!installPrompt) return;
+      installPrompt.prompt();
+      await installPrompt.userChoice;
+      installPrompt = null;
+      installButton.hidden = true;
+    });
 
-  const phone = document.getElementById("phone").value;
-  if(phone.length < 9){
-    alert("Enter valid phone number");
-    return;
-  }
-
-  const admin = "254712706833";
-  const msg = `
-Starlink Payment Request
-Package: ${selectedPackage}
-Amount: KES ${selectedAmount}
-Phone: ${phone}
-Paybill 714888
-Account 418441`;
-
-  window.open(`https://wa.me/${admin}?text=${encodeURIComponent(msg)}`);
-}
-
-function confirmPayment(){
-  const phone = document.getElementById("phone").value;
-  const mpesa = prompt("Enter M-Pesa Transaction Code");
-
-  if(phone.length < 9 || !mpesa){
-    alert("Missing details");
-    return;
-  }
-
-  const admin = "254712706833";
-  const msg = `
-PAYMENT CONFIRMED
-Phone: ${phone}
-M-Pesa Code: ${mpesa}`;
-
-  window.open(`https://wa.me/${admin}?text=${encodeURIComponent(msg)}`);
-
-  dashboard.style.display = "none";
-  accessPage.style.display = "block";
-
-  document.getElementById("code").innerText =
-    Math.random().toString(36).substring(2,6).toUpperCase() + "-" +
-    Math.random().toString(36).substring(2,6).toUpperCase();
-}
-
-// Service Worker
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("service-worker.js");
-}
-</script>
-
+    window.addEventListener("appinstalled", () => {
+      installButton.hidden = true;
+      installPrompt = null;
+    });
+  </script>
 </body>
 </html>
